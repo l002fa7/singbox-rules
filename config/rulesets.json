@@ -8,7 +8,7 @@
   "rulesets": [
     {
       "id": "direct-domain",
-      "output": "rule/domain/direct.srs",
+      "output": "rule/direct/direct_domain.srs",
       "expectedCount": [
         30000,
         45000
@@ -44,7 +44,7 @@
     },
     {
       "id": "direct-ip",
-      "output": "rule/ip/direct.srs",
+      "output": "rule/direct/direct_ip.srs",
       "expectedCount": [
         8000,
         12000
@@ -61,7 +61,7 @@
     {
       "id": "ads-domain",
       "kind": "domain",
-      "output": "rule/domain/ads.srs",
+      "output": "rule/ads/ads.srs",
       "expectedCount": [
         8000,
         12000
