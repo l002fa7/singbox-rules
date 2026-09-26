@@ -1,0 +1,66 @@
+name: Build rule-sets
+
+on:
+  schedule:
+    # 每天北京时间 02:43（UTC 18:43），滞后上游一步以取到当日新数据
+    - cron: '43 18 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'config/**'
+      - 'scripts/**'
+      - 'custom/**'
+      - 'test/**'
+      - '.github/workflows/build.yml'
+
+permissions:
+  contents: write
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install sing-box (latest stable)
+        run: |
+          set -euo pipefail
+          tag="$(curl -fsSL -H 'User-Agent: ci' https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r .tag_name)"
+          ver="${tag#v}"
+          curl -fsSL -o sb.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${tag}/sing-box-${ver}-linux-amd64.tar.gz"
+          tar -xzf sb.tar.gz
+          rm -f sb.tar.gz
+          echo "$PWD/sing-box-${ver}-linux-amd64" >> "$GITHUB_PATH"
+          echo "installed sing-box $tag"
+
+      - name: Unit tests
+        run: node --test "test/*.test.mjs"
+
+      - name: Build rule-sets
+        run: |
+          set -euo pipefail
+          node scripts/build.mjs --singbox "$(command -v sing-box)"
+
+      - name: Commit changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A rule
+          if git diff --cached --quiet; then
+            echo "规则无变化，跳过提交"
+            exit 0
+          fi
+          sbver="$(sing-box version | head -n1 | awk '{print $3}')"
+          git commit -m "chore: rebuild rule-sets with sing-box $sbver"
+          git push
