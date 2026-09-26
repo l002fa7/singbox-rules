@@ -1,5 +1,5 @@
 {
-  "rule/direct/direct_domain.srs": [
+  "rule/direct_domain.srs": [
     {
       "probe": "www.baidu.com",
       "expect": true,
@@ -46,7 +46,7 @@
       "why": "负样本"
     }
   ],
-  "rule/direct/direct_ip.srs": [
+  "rule/direct_ip.srs": [
     {
       "probe": "223.5.5.5",
       "expect": true,
@@ -63,7 +63,7 @@
       "why": "Cloudflare DNS，非 CN"
     }
   ],
-  "rule/ads/ads.srs": [
+  "rule/ads.srs": [
     {
       "probe": "doubleclick.net",
       "expect": true,

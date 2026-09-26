@@ -8,15 +8,15 @@
 
 | 规则集 | 文件 | 说明 | 订阅直链 |
 |---|---|---|---|
-| 直连域名 | `rule/direct/direct_domain.srs` | `cn` + `proxy@direct` + `spotify` + `private` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/direct/direct_domain.srs` |
-| 直连 IP | `rule/direct/direct_ip.srs` | 同上游 `list/ip/direct.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/direct/direct_ip.srs` |
-| 去广告域名 | `rule/ads/ads.srs` | 同上游 `list/domain/ads.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/ads/ads.srs` |
+| 直连域名 | `rule/direct_domain.srs` | `cn` + `proxy@direct` + `spotify` + `private` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/direct_domain.srs` |
+| 直连 IP | `rule/direct_ip.srs` | 同上游 `list/ip/direct.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/direct_ip.srs` |
+| 去广告域名 | `rule/ads.srs` | 同上游 `list/domain/ads.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/ads.srs` |
 
 jsDelivr 镜像（国内更快）：
 
-- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/direct/direct_domain.srs`
-- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/direct/direct_ip.srs`
-- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/ads/ads.srs`
+- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/direct_domain.srs`
+- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/direct_ip.srs`
+- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/ads.srs`
 
 ## 数据来源
 
