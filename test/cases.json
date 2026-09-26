@@ -62,5 +62,37 @@
       "expect": false,
       "why": "Cloudflare DNS，非 CN"
     }
+  ],
+  "rule/domain/ads.srs": [
+    {
+      "probe": "doubleclick.net",
+      "expect": true,
+      "why": "广告域名（上游 ads.list）"
+    },
+    {
+      "probe": "www.doubleclick.net",
+      "expect": true,
+      "why": "domain_suffix 覆盖子域"
+    },
+    {
+      "probe": "ad.cyapi.cn",
+      "expect": true,
+      "why": "上游 ad_add_domain.list 追加项"
+    },
+    {
+      "probe": "adeventtracker.spotify.com",
+      "expect": false,
+      "why": "回归护栏：v2fly spotify 的 @ads 行不得被并入"
+    },
+    {
+      "probe": "a0.app.xiaomi.com",
+      "expect": false,
+      "why": "上游 ad_del_domain.list 删除项应生效"
+    },
+    {
+      "probe": "www.baidu.com",
+      "expect": false,
+      "why": "普通域名不得被广告集误吞"
+    }
   ]
 }

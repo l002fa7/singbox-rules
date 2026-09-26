@@ -2,7 +2,7 @@
 
 以 [echs-top/proxy](https://github.com/echs-top/proxy) 为上游，产出 **sing-box `.srs` 规则集** 并自动跟随上游更新。
 
-当前范围：**直连（direct）规则**，含域名与 IP 两类。代理规则与去广告规则后续加入。
+当前范围：**直连（direct）** 与 **去广告（ads）** 两类规则。直连含域名与 IP，去广告为域名。
 
 ## 产物
 
@@ -10,21 +10,24 @@
 |---|---|---|---|
 | 直连域名 | `rule/domain/direct.srs` | `cn` + `proxy@direct` + `spotify` + `private` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/domain/direct.srs` |
 | 直连 IP | `rule/ip/direct.srs` | 同上游 `list/ip/direct.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/ip/direct.srs` |
+| 去广告域名 | `rule/domain/ads.srs` | 同上游 `list/domain/ads.list` | `https://raw.githubusercontent.com/l002fa7/singbox-rules/main/rule/domain/ads.srs` |
 
 jsDelivr 镜像（国内更快）：
 
 - `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/domain/direct.srs`
 - `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/ip/direct.srs`
+- `https://cdn.jsdelivr.net/gh/l002fa7/singbox-rules@main/rule/domain/ads.srs`
 
 ## 数据来源
 
 | 规则集 | 信源 |
 |---|---|
 | 直连域名 | 上游 `list/domain/cn.list`（已含上游 `cn-lite` + `cn-additional` 合并结果） |
-| 直连域名 | 上游 `list/domain/proxy@direct.list`（代理模式下仍需直连的域名） |
-| 直连域名 | [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) `data/spotify`（`@ads` 属性行除外） |
+| 直连域名 | 上游 `list/domain/proxy@direct.list`（直连场景下需要放行的域名） |
+| 直连域名 | [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community) `data/spotify` |
 | 直连域名 | [DustinWin/ruleset_geodata](https://github.com/DustinWin/ruleset_geodata) `private.list` —— 与上游 `work/domain/direct.list` 第 1 行同源 |
 | 直连 IP | 上游 `list/ip/direct.list` |
+| 去广告域名 | 上游 `list/domain/ads.list`（其上游为 AWAvenue-Ads-Rule、217heidai/adblockfilters、peter 列表及上游自身的增删） |
 
 上游自身只产出 MRS（用 mihomo 内核转换），本仓库用 **sing-box 官方 CLI** 编译出 SRS。
 
@@ -45,14 +48,19 @@ v2fly `domain-list-community` 文本（裸域语义与 clash 相反）：
 |---|---|
 | `spotify.com`（裸域） | `domain_suffix`（含子域） |
 | `full:xxx` | `domain`（精确） |
-| 带 `@ads` 属性 | 跳过（留给后续去广告规则） |
+| 带 `@ads` 属性 | 跳过（**不并入任何规则集**，包括 ads） |
 
 ## 自定义增删
 
-- `custom/direct-add-domain.list`：在合并上游数据之后追加
-- `custom/direct-del-domain.list`：在追加之后执行删除，可当上游数据的黑名单
+每组规则各有一对增删文件：
 
-两者语法与 clash domain 文本一致（`+.x` / `*.x` / 裸域）。删除采用覆盖语义，详见文件内注释。
+| 规则集 | 追加 | 删除 |
+|---|---|---|
+| 直连域名 | `custom/direct-add-domain.list` | `custom/direct-del-domain.list` |
+| 去广告域名 | `custom/ads-add-domain.list` | `custom/ads-del-domain.list` |
+
+追加在合并上游数据之后执行；删除在追加之后执行，可用作误杀白名单。
+两者语法与 clash domain 文本一致（`+.x` / `*.x` / 裸域）。删除采用覆盖语义，详见各文件内注释。
 改动后 push 即会触发重建。
 
 ## 自动同步
@@ -70,7 +78,7 @@ v2fly `domain-list-community` 文本（裸域语义与 clash 相反）：
 需要 Node.js 18+ 与 sing-box CLI。
 
 ```bash
-node --test test/
+node --test "test/*.test.mjs"
 node scripts/build.mjs --singbox /path/to/sing-box
 ```
 
@@ -79,12 +87,17 @@ node scripts/build.mjs --singbox /path/to/sing-box
 
 ## 构建校验
 
-`test/cases.json` 中的语义断言每次构建都会执行，其中包括：
+`test/cases.json` 中的语义断言每次构建都会执行：
 
-- `www.baidu.com` 必须命中直连域名集
-- **`claude.ai` / `chatgpt.com` 必须不命中**（防止 `ai.list` 被误并入直连的回归护栏）
-- `www.google.com` 必须不命中（证明 `*` 不是 catch-all）
-- `223.5.5.5` 命中直连 IP 集，`8.8.8.8` 不命中
+| 规则集 | 断言 |
+|---|---|
+| 直连域名 | `www.baidu.com` 必须命中 |
+| 直连域名 | **`claude.ai` / `chatgpt.com` 必须不命中**（防止内容被误并入直连） |
+| 直连域名 | `www.google.com` 必须不命中（证明 `*` 不是 catch-all） |
+| 直连 IP | `223.5.5.5` 命中，`8.8.8.8` 不命中 |
+| 去广告域名 | `doubleclick.net`、`ad.cyapi.cn` 必须命中 |
+| 去广告域名 | **`adeventtracker.spotify.com` 必须不命中**（v2fly spotify 的 `@ads` 行不得被并入） |
+| 去广告域名 | `a0.app.xiaomi.com` 必须不命中（上游删除项生效），`www.baidu.com` 必须不命中 |
 
 ## 致谢
 

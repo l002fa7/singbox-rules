@@ -57,6 +57,24 @@
         }
       ],
       "kind": "ip"
+    },
+    {
+      "id": "ads-domain",
+      "kind": "domain",
+      "output": "rule/domain/ads.srs",
+      "expectedCount": [
+        8000,
+        12000
+      ],
+      "sources": [
+        {
+          "id": "upstream-ads",
+          "format": "clash",
+          "url": "https://raw.githubusercontent.com/echs-top/proxy/main/list/domain/ads.list"
+        }
+      ],
+      "add": "custom/ads-add-domain.list",
+      "del": "custom/ads-del-domain.list"
     }
   ]
 }

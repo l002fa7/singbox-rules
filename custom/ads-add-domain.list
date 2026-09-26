@@ -1,0 +1,7 @@
+# 去广告域名 —— 追加规则（在合并上游数据之后追加）
+# 语法（与 mihomo/clash domain 文本一致）：
+#   +.example.com   追加 example.com 及其所有子域
+#   *.example.com   追加 example.com 的子域（不含 example.com 自身）
+#   example.com     仅精确匹配 example.com
+# 用途示例：把广告以外的、需要放行的域名从本表移除请用 ads-del 文件。
+# 每行一条，'#' 起始为注释。默认留空。
