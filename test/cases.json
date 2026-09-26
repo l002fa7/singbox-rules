@@ -1,0 +1,66 @@
+{
+  "rule/domain/direct.srs": [
+    {
+      "probe": "www.baidu.com",
+      "expect": true,
+      "why": "CN 域名（cn.list）"
+    },
+    {
+      "probe": "baidu.com",
+      "expect": true,
+      "why": "domain_suffix 覆盖 apex"
+    },
+    {
+      "probe": "claude.ai",
+      "expect": false,
+      "why": "回归护栏：ai.list 绝不可被并入直连"
+    },
+    {
+      "probe": "chatgpt.com",
+      "expect": false,
+      "why": "回归护栏：同上"
+    },
+    {
+      "probe": "spotify.com",
+      "expect": true,
+      "why": "v2fly 裸域 -> domain_suffix"
+    },
+    {
+      "probe": "audio-ak-spotify-com.akamaized.net",
+      "expect": true,
+      "why": "v2fly full: -> domain 精确"
+    },
+    {
+      "probe": "10.in-addr.arpa",
+      "expect": true,
+      "why": "DustinWin private"
+    },
+    {
+      "probe": "www.google.com",
+      "expect": false,
+      "why": "证明 '*' 不是 catch-all"
+    },
+    {
+      "probe": "definitely-not-a-real-domain-xyzzy.com",
+      "expect": false,
+      "why": "负样本"
+    }
+  ],
+  "rule/ip/direct.srs": [
+    {
+      "probe": "223.5.5.5",
+      "expect": true,
+      "why": "阿里公共 DNS，属 CN IP"
+    },
+    {
+      "probe": "8.8.8.8",
+      "expect": false,
+      "why": "Google DNS，非 CN"
+    },
+    {
+      "probe": "1.1.1.1",
+      "expect": false,
+      "why": "Cloudflare DNS，非 CN"
+    }
+  ]
+}

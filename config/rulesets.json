@@ -1,0 +1,62 @@
+{
+  "$comment": "声明式规则集定义。新增代理规则/去广告规则时在此追加条目，构建器代码无需改动。",
+  "formats": {
+    "clash": "mihomo/clash domain 文本：'+.x'=含子域, '*.x'=仅子域, 'x'=精确, '*'=映射为 domain_suffix '*'",
+    "v2fly": "v2fly domain-list-community data：裸域=含子域, 'full:x'=精确, 支持 @属性",
+    "ip": "每行一个 IP 或 CIDR"
+  },
+  "rulesets": [
+    {
+      "id": "direct-domain",
+      "output": "rule/domain/direct.srs",
+      "expectedCount": [
+        30000,
+        45000
+      ],
+      "sources": [
+        {
+          "id": "upstream-cn",
+          "format": "clash",
+          "url": "https://raw.githubusercontent.com/echs-top/proxy/main/list/domain/cn.list"
+        },
+        {
+          "id": "upstream-proxy-at-direct",
+          "format": "clash",
+          "url": "https://raw.githubusercontent.com/echs-top/proxy/main/list/domain/proxy@direct.list"
+        },
+        {
+          "id": "v2fly-spotify",
+          "format": "v2fly",
+          "url": "https://raw.githubusercontent.com/v2fly/domain-list-community/master/data/spotify",
+          "skipAttributes": [
+            "ads"
+          ]
+        },
+        {
+          "id": "dustinwin-private",
+          "format": "clash",
+          "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.list"
+        }
+      ],
+      "add": "custom/direct-add-domain.list",
+      "del": "custom/direct-del-domain.list",
+      "kind": "domain"
+    },
+    {
+      "id": "direct-ip",
+      "output": "rule/ip/direct.srs",
+      "expectedCount": [
+        8000,
+        12000
+      ],
+      "sources": [
+        {
+          "id": "upstream-ip-direct",
+          "format": "ip",
+          "url": "https://raw.githubusercontent.com/echs-top/proxy/main/list/ip/direct.list"
+        }
+      ],
+      "kind": "ip"
+    }
+  ]
+}

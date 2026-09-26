@@ -1,0 +1,4 @@
+# 统一换行符，避免 Windows 工作区与 Linux CI 之间产生虚假 diff
+* text=auto eol=lf
+# SRS 是二进制产物，禁止任何换行/编码转换
+*.srs binary
